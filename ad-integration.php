@@ -1865,7 +1865,10 @@ class ADIntegrationPlugin {
 	 * Loads the options from WordPress-DB
 	 */
 	protected function _load_options() {
-		
+		// only load options when its required
+		$bn = basename($_SERVER['SCRIPT_FILENAME']);
+		if(	!in_array($bn, ['wp-login.php', 'options-general.php']) ) return;
+
 		if ( is_multisite() ) {
 			$this->_log(ADI_LOG_INFO,'loading options (WPMU) ...');
 			
