@@ -21,7 +21,6 @@ DEFINE('ADI_NO_UF_NORMAL_ACOUNT', 67254272); // = UF_INTERDOMAIN_TRUST_ACCOUNT +
 
 
 if ( !defined('WP_LOAD_PATH') ) {
-
 	/** classic root path if wp-content and plugins is below wp-config.php */
 	$classic_root = dirname(dirname(dirname(dirname(__FILE__)))) . '/' ;
 	
@@ -33,6 +32,8 @@ if ( !defined('WP_LOAD_PATH') ) {
 		else
 			exit("Could not find wp-load.php");
 }
+
+define( 'ABSPATH', WP_LOAD_PATH);
 
 // let's load WordPress
 require_once( WP_LOAD_PATH . 'wp-load.php');
