@@ -377,7 +377,7 @@ class ADIntegrationPlugin {
 			// TODO: auto_login feature must be tested
 			
 			if ($this->_sso_enabled) {
-				add_action('init', array(&$this, 'auto_login'));
+				add_action('init', array(&$this, 'auto_login'), 5);
 			}
 		    
 			
@@ -959,22 +959,29 @@ class ADIntegrationPlugin {
 		// TODO: This has to be tested - carefully
 		// looks pretty insecure
 		
+		$bn = basename($_SERVER['SCRIPT_FILENAME']);
+		// skip logout process to relogin as different user
+		if($bn == "wp-login.php" && (isset($_GET['action']) || isset($_GET['loggedout'])) ) return;
+
 		if(isset($_SERVER['REMOTE_USER']) && !empty($_SERVER['REMOTE_USER'])) {
 			$user_login = $_SERVER['REMOTE_USER'];
 		} else if(isset($_SERVER['REDIRECT_REMOTE_USER']) && !empty($_SERVER['REDIRECT_REMOTE_USER']) ) {
 			$user_login = $_SERVER['REDIRECT_REMOTE_USER'];
 		}
-		
+
 		if (!is_user_logged_in() && isset($user_login)) {
 			$part = explode("@", $user_login);
 			$user_login = $part[0];
-			$user = get_userdatabylogin($user_login); // TODO: deprecated
-			
-			error_log("Auto-Login (SSO) ...checking " . $user_login);
-			$user_id = $user->ID;
-			wp_set_current_user($user_id, $user_login);
-			wp_set_auth_cookie($user_id);
-			do_action('wp_login', $user_login);
+			$user = get_user_by('login',$user_login);
+
+			if($user) {
+				error_log("Auto-Login (SSO) ...checking " . $user_login . " ID: " . $user->ID);
+
+				wp_set_current_user($user->ID, $user_login);
+				wp_set_auth_cookie($user->ID);
+				do_action('wp_login', $user_login);
+				wp_redirect(get_site_url());
+			}
 		}
     }	
 
