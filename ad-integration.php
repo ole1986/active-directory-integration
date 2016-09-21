@@ -960,8 +960,11 @@ class ADIntegrationPlugin {
 		// looks pretty insecure
 		
 		$bn = basename($_SERVER['SCRIPT_FILENAME']);
+		
 		// skip logout process to relogin as different user
 		if($bn == "wp-login.php" && (isset($_GET['action']) || isset($_GET['loggedout'])) ) return;
+		// skip if another user is trying to login
+		if($bn == "wp-login.php" && isset($_POST['log'])) return;
 
 		if(isset($_SERVER['REMOTE_USER']) && !empty($_SERVER['REMOTE_USER'])) {
 			$user_login = $_SERVER['REMOTE_USER'];
@@ -975,12 +978,12 @@ class ADIntegrationPlugin {
 			$user = get_user_by('login',$user_login);
 
 			if($user) {
-				error_log("Auto-Login (SSO) ...checking " . $user_login . " ID: " . $user->ID);
+				error_log("ADI: Auto-Login (SSO) using " . $user_login . " ID: " . $user->ID);
 
 				wp_set_current_user($user->ID, $user_login);
 				wp_set_auth_cookie($user->ID);
 				do_action('wp_login', $user_login);
-				wp_redirect(get_site_url());
+				wp_redirect(get_home_url());
 			}
 		}
     }	
