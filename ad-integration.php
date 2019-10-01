@@ -644,7 +644,7 @@ class ADIntegrationPlugin {
 	public function authenticate($user = NULL, $username = '', $password = '') {
 		
 		global $wp_version;
-		
+
 		$this->_log(ADI_LOG_INFO,'method authenticate() called');		
 		
 		// log debug informations
@@ -1877,7 +1877,7 @@ class ADIntegrationPlugin {
 	protected function _load_options() {
 		// only load options when its required
 		$bn = basename($_SERVER['SCRIPT_FILENAME']);
-		if(	!in_array($bn, ['wp-login.php', 'options-general.php']) ) return;
+		if(	!in_array($bn, ['wp-login.php', 'options-general.php', 'test.php']) ) return;
 
 		if ( is_multisite() ) {
 			$this->_log(ADI_LOG_INFO,'loading options (WPMU) ...');
